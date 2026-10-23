@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = 'AntMarkdown'
-  spec.version = '0.1.2'
+  spec.version = '0.1.3'
   spec.summary = 'iOS Markdown rendering (FluidMarkdown / Ant fork)'
   spec.description = <<-DESC
     Markdown rendering with code highlighting, math, tables, and streaming AMXMarkdownTextView.
@@ -31,6 +31,12 @@ Pod::Spec.new do |spec|
     'AntMarkdown/Sources/Public/**/*.{h,m}',
     'AntMarkdown/Sources/External/**/*.{h,m,c}',
     'Sources/**/*.{h,m}'
+  ]
+
+  # cmark-gfm 的 .inc 不在 source_files 后缀里；不 preserve 时 CocoaPods 安装会丢掉，
+  # 编译 utf8.c 报 case_fold_switch.inc / entities.inc file not found。
+  spec.preserve_paths = [
+    'AntMarkdown/Sources/External/cmark-gfm/src/*.inc',
   ]
 
   # 勿用 '**/*.plist'：会把 mathFonts.bundle 里的 xits-math.plist 一并排除，

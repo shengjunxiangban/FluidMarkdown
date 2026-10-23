@@ -5,7 +5,7 @@ Fork 自 [antgroup/FluidMarkdown](https://github.com/antgroup/FluidMarkdown)，�
 ## 主工程引用（推荐）
 
 ```ruby
-pod 'AntMarkdown', :git => 'https://github.com/shengjunxiangban/FluidMarkdown.git', :tag => '0.1.2'
+pod 'AntMarkdown', :git => 'https://github.com/shengjunxiangban/FluidMarkdown.git', :tag => '0.1.3'
 ```
 
 ## 发布新版本
@@ -14,10 +14,10 @@ pod 'AntMarkdown', :git => 'https://github.com/shengjunxiangban/FluidMarkdown.gi
 # 1. 改 AntMarkdown.podspec 里的 spec.version
 # 2. 提交并推送
 git add -A
-git commit -m "chore: AntMarkdown 0.1.2"
+git commit -m "chore: AntMarkdown 0.1.3"
 git push origin main
-git tag 0.1.2
-git push origin 0.1.2
+git tag 0.1.3
+git push origin 0.1.3
 ```
 
 ## 本地联调（未 push tag 时）
@@ -25,6 +25,10 @@ git push origin 0.1.2
 ```ruby
 pod 'AntMarkdown', :path => '../FluidMarkdown'
 ```
+
+## 0.1.3 修复
+
+- `preserve_paths` 保留 cmark-gfm 的 `*.inc`（修复 git pod 下 `case_fold_switch.inc` not found）
 
 ## 0.1.2 修复
 
