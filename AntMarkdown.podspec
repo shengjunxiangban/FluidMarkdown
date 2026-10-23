@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = 'AntMarkdown'
-  spec.version = '0.1.3'
+  spec.version = '0.1.4'
   spec.summary = 'iOS Markdown rendering (FluidMarkdown / Ant fork)'
   spec.description = <<-DESC
     Markdown rendering with code highlighting, math, tables, and streaming AMXMarkdownTextView.
@@ -16,11 +16,12 @@ Pod::Spec.new do |spec|
 
   spec.source = { :git => 'https://github.com/shengjunxiangban/FluidMarkdown.git', :tag => spec.version.to_s }
 
-  # Public headers must include CocoaMarkdown: AMTextStyles.h (Public) imports "CocoaMarkdown.h",
-  # otherwise Swift explicit modules fail with 'CocoaMarkdown.h' file not found.
+  # Public headers must include everything AntMarkdown.h / CocoaMarkdown re-exports,
+  # otherwise modular builds fail (e.g. 'Ono.h' / 'CocoaMarkdown.h' file not found).
   spec.public_header_files = [
     'AntMarkdown/Sources/Public/*.h',
     'AntMarkdown/Sources/External/CocoaMarkdown/**/*.h',
+    'AntMarkdown/Sources/External/Ono/*.h',
     'AntMarkdown/Sources/External/cmark-gfm/*.h',
     'AntMarkdown/Sources/External/cmark-gfm/src/*.h',
     'AntMarkdown/Sources/External/cmark-gfm/extensions/**/*.h',
@@ -57,18 +58,21 @@ Pod::Spec.new do |spec|
   }
 
   spec.frameworks = 'UIKit', 'Foundation', 'JavaScriptCore', 'CoreText', 'CoreGraphics'
+  spec.libraries = 'xml2'
 
-  fluid_cmark_paths = [
+  fluid_header_paths = [
     '"$(PODS_TARGET_SRCROOT)/AntMarkdown/Sources/External"',
     '"$(PODS_TARGET_SRCROOT)/AntMarkdown/Sources/External/CocoaMarkdown"',
+    '"$(PODS_TARGET_SRCROOT)/AntMarkdown/Sources/External/Ono"',
     '"$(PODS_TARGET_SRCROOT)/AntMarkdown/Sources/External/cmark-gfm"',
     '"$(PODS_TARGET_SRCROOT)/AntMarkdown/Sources/External/cmark-gfm/src"',
     '"$(PODS_TARGET_SRCROOT)/AntMarkdown/Sources/External/cmark-gfm/extensions/core-extensions"',
     '"$(PODS_TARGET_SRCROOT)/AntMarkdown/Sources/External/cmark-gfm/extensions/table"',
+    '"$(SDKROOT)/usr/include/libxml2"',
   ].join(' ')
 
   spec.pod_target_xcconfig = {
-    'HEADER_SEARCH_PATHS' => "$(inherited) #{fluid_cmark_paths}",
+    'HEADER_SEARCH_PATHS' => "$(inherited) #{fluid_header_paths}",
     'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited)',
   }
 end
