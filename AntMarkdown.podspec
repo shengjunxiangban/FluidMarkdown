@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = 'AntMarkdown'
-  spec.version = '0.1.1'
+  spec.version = '0.1.2'
   spec.summary = 'iOS Markdown rendering (FluidMarkdown / Ant fork)'
   spec.description = <<-DESC
     Markdown rendering with code highlighting, math, tables, and streaming AMXMarkdownTextView.
@@ -21,7 +21,10 @@ Pod::Spec.new do |spec|
   spec.public_header_files = [
     'AntMarkdown/Sources/Public/*.h',
     'AntMarkdown/Sources/External/CocoaMarkdown/**/*.h',
-    'Sources/**/*.h'
+    'AntMarkdown/Sources/External/cmark-gfm/*.h',
+    'AntMarkdown/Sources/External/cmark-gfm/src/*.h',
+    'AntMarkdown/Sources/External/cmark-gfm/extensions/**/*.h',
+    'Sources/**/*.h',
   ]
 
   spec.source_files = [
@@ -30,13 +33,15 @@ Pod::Spec.new do |spec|
     'Sources/**/*.{h,m}'
   ]
 
+  # 勿用 '**/*.plist'：会把 mathFonts.bundle 里的 xits-math.plist 一并排除，
+  # 导致 :git 安装后公式/数学变量（含数字）渲染失败。
   spec.exclude_files = [
     'AntMarkdown/Sources/External/**/Info.plist',
-    '**/*.plist'
+    'AntMarkdown/Sources/**/*.plist',
   ]
 
-  # highlightjs.bundle files are merged *into* AntMarkdown.bundle (flat). AMCodeHighlighter loads
-  # highlight.min.js / default.min.css via URLForResource: on that bundle, not pathForResource:…/highlightjs.bundle.
+  # highlightjs / mathFonts 内容会合并进 AntMarkdown.bundle（扁平）。
+  # AMCodeHighlighter / MTFont 需按扁平 bundle 加载资源。
   spec.resource_bundles = {
     'AntMarkdown' => [
       'AntMarkdown/Resources/AntMarkdown.bundle/**/*',
@@ -47,8 +52,17 @@ Pod::Spec.new do |spec|
 
   spec.frameworks = 'UIKit', 'Foundation', 'JavaScriptCore', 'CoreText', 'CoreGraphics'
 
+  fluid_cmark_paths = [
+    '"$(PODS_TARGET_SRCROOT)/AntMarkdown/Sources/External"',
+    '"$(PODS_TARGET_SRCROOT)/AntMarkdown/Sources/External/CocoaMarkdown"',
+    '"$(PODS_TARGET_SRCROOT)/AntMarkdown/Sources/External/cmark-gfm"',
+    '"$(PODS_TARGET_SRCROOT)/AntMarkdown/Sources/External/cmark-gfm/src"',
+    '"$(PODS_TARGET_SRCROOT)/AntMarkdown/Sources/External/cmark-gfm/extensions/core-extensions"',
+    '"$(PODS_TARGET_SRCROOT)/AntMarkdown/Sources/External/cmark-gfm/extensions/table"',
+  ].join(' ')
+
   spec.pod_target_xcconfig = {
-    'HEADER_SEARCH_PATHS' => '$(inherited) "$(PODS_TARGET_SRCROOT)/AntMarkdown/Sources/External/**"',
-    'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited)'
+    'HEADER_SEARCH_PATHS' => "$(inherited) #{fluid_cmark_paths}",
+    'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited)',
   }
 end

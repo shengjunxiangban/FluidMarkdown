@@ -2,27 +2,34 @@
 
 Fork 自 [antgroup/FluidMarkdown](https://github.com/antgroup/FluidMarkdown)，便于通过 CocoaPods 集成。
 
-## 发布到 GitHub（打 tag 后主工程即可 `pod install`）
-
-```bash
-git add -A
-git commit -m "chore: AntMarkdown 0.1.1 podspec + LICENSE"
-git push origin main
-git tag 0.1.1
-git push origin 0.1.1
-```
-
-主工程 `Podfile`：
+## 主工程引用（推荐）
 
 ```ruby
-pod 'AntMarkdown', git: 'https://github.com/shengjunxiangban/FluidMarkdown.git', tag: '0.1.1'
+pod 'AntMarkdown', :git => 'https://github.com/shengjunxiangban/FluidMarkdown.git', :tag => '0.1.2'
+```
+
+## 发布新版本
+
+```bash
+# 1. 改 AntMarkdown.podspec 里的 spec.version
+# 2. 提交并推送
+git add -A
+git commit -m "chore: AntMarkdown 0.1.2"
+git push origin main
+git tag 0.1.2
+git push origin 0.1.2
 ```
 
 ## 本地联调（未 push tag 时）
 
 ```ruby
-pod 'AntMarkdown', path: '../FluidMarkdown'
+pod 'AntMarkdown', :path => '../FluidMarkdown'
 ```
+
+## 0.1.2 修复
+
+- 去掉 `exclude_files` 中的 `**/*.plist`，保留 `xits-math.plist`（公式/数学变量渲染）
+- `MTFont` 适配 CocoaPods 将 `mathFonts.bundle` 扁平合并进 `AntMarkdown.bundle`
 
 ## 校验 podspec
 

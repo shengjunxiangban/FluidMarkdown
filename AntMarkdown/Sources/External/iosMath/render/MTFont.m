@@ -70,7 +70,22 @@
 + (NSBundle*) fontBundle
 {
     // Uses bundle for class so that this can be access by the unit tests.
-    return [NSBundle bundleWithURL:[[NSBundle bundleForClass:[self class]] URLForResource:@"mathFonts" withExtension:@"bundle"]];
+    NSBundle *const fw = [NSBundle bundleForClass:[self class]];
+    NSURL *mathFontsURL = [fw URLForResource:@"mathFonts" withExtension:@"bundle"];
+    if (mathFontsURL) {
+        return [NSBundle bundleWithURL:mathFontsURL];
+    }
+
+    // CocoaPods `resource_bundles` copies mathFonts.bundle *contents* into AntMarkdown.bundle (flat).
+    NSURL *companionURL = [fw URLForResource:@"AntMarkdown" withExtension:@"bundle"];
+    NSBundle *resourceBundle = companionURL ? [NSBundle bundleWithURL:companionURL] : fw;
+    if (resourceBundle == fw && ![fw URLForResource:@"xits-math" withExtension:@"otf"]) {
+        NSURL *mainCompanion = [NSBundle.mainBundle URLForResource:@"AntMarkdown" withExtension:@"bundle"];
+        if (mainCompanion) {
+            resourceBundle = [NSBundle bundleWithURL:mainCompanion];
+        }
+    }
+    return resourceBundle ?: fw;
 }
 
 - (MTFont *)copyFontWithSize:(CGFloat)size
